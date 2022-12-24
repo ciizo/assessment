@@ -1,4 +1,4 @@
-package expense
+package model
 
 type Expense struct {
 	ID     int      `json:"id"`
