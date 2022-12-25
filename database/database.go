@@ -10,8 +10,15 @@ import (
 	"github.com/lib/pq"
 )
 
+type DB interface {
+	QueryRow(query string, args ...any) *sql.Row
+	Exec(query string, args ...interface{}) (sql.Result, error)
+	// CreateExpense(entity *model.Expense) error
+}
+
 type Db struct {
-	*sql.DB
+	// *sql.DB
+	DB
 }
 
 func InitDb() {
