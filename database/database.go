@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
@@ -54,7 +55,7 @@ func (db *Db) CreateExpense(entity *model.Expense) error {
 
 	err := row.Scan(&entity.ID)
 	if err != nil {
-		log.Fatal("can't create expense ", err)
+		fmt.Println("can't create expense ", err)
 		return err
 	}
 

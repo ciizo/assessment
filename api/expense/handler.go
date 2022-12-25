@@ -15,11 +15,11 @@ type Handler struct {
 func RegisterHandler(httpHandler *echo.Echo) {
 
 	db := database.NewDb()
-	s := expense.NewService(db)
-	h := &Handler{expenseService: s}
+	service := expense.NewService(db)
+	handler := &Handler{expenseService: service}
 
 	httpHandler.Use(middleware.Logger())
 	httpHandler.Use(middleware.Recover())
 
-	httpHandler.POST("/expenses", h.createHandler)
+	httpHandler.POST("/expenses", handler.createHandler)
 }
