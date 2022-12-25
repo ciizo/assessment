@@ -19,6 +19,7 @@ type DB interface {
 type Db struct {
 	// *sql.DB
 	DB
+	isTestMode bool
 }
 
 func InitDb() {
@@ -36,7 +37,7 @@ func getDatabase() *Db {
 		log.Fatal("can't connect to database", err)
 	}
 
-	return &Db{conn}
+	return &Db{DB: conn}
 }
 
 func (db *Db) initExpenseTable() {
@@ -60,7 +61,10 @@ func (db *Db) CreateExpense(entity *model.Expense) error {
 	row := db.QueryRow("INSERT INTO expenses (title, amount, note, tags) values ($1, $2, $3, $4)  RETURNING id",
 		entity.Title, entity.Amount, entity.Note, pq.Array(&entity.Tags))
 
-	err := row.Scan(&entity.ID)
+	var err error
+	if !db.isTestMode {
+		err = row.Scan(&entity.ID)
+	}
 	if err != nil {
 		fmt.Println("can't create expense ", err)
 		return err

@@ -30,29 +30,30 @@ func (m *mockDB) QueryRow(query string, args ...interface{}) *sql.Row {
 
 	// return sql.Row(&mockSqlROW{})
 	// return (*sql.Row)(unsafe.Pointer(&mockSqlROW{}))
-	return &mockSqlROW{}
+	// return &mockSqlROW{}
+	return &sql.Row{}
 }
 
-type mockSqlROW struct {
-	err  error
-	rows *sql.Rows
-}
+// type mockSqlROW struct {
+// 	err  error
+// 	rows *sql.Rows
+// }
 
-func (r *mockSqlROW) Scan(dest ...interface{}) error {
-	// if r.err != nil {
-	// 	return r.err
-	// }
+// func (r *mockSqlROW) Scan(dest ...interface{}) error {
+// 	// if r.err != nil {
+// 	// 	return r.err
+// 	// }
 
-	return nil
-}
+// 	return nil
+// }
 
-func (r *mockSqlROW) Err() error {
-	return r.err
-}
+// func (r *mockSqlROW) Err() error {
+// 	return r.err
+// }
 
 func TestCreateExpense(t *testing.T) {
 	mock := &mockDB{}
-	db := &Db{mock}
+	db := &Db{DB: mock, isTestMode: true}
 	entity := &model.Expense{Title: "strawberry smoothie",
 		Amount: 79,
 		Note:   "night market promotion discount 10 bath",
