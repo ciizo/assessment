@@ -5,7 +5,8 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/lib/pq"
+	"github.com/ciizo/assessment/model"
+	"github.com/lib/pq"
 )
 
 type Db struct {
@@ -17,7 +18,7 @@ func InitDb() {
 	db.initExpenseTable()
 }
 
-func NewDb(filename string) *Db {
+func NewDb() *Db {
 	return getDatabase()
 }
 
@@ -44,4 +45,18 @@ func (db *Db) initExpenseTable() {
 	if _, err := db.Exec(createTableSql); err != nil {
 		log.Fatal("can't create table ", err)
 	}
+}
+
+func (db *Db) CreateExpense(entity *model.Expense) error {
+
+	row := db.QueryRow("INSERT INTO expenses (title, amount, note, tags) values ($1, $2, $3, $4)  RETURNING id",
+		entity.Title, entity.Amount, entity.Note, pq.Array(&entity.Tags))
+
+	err := row.Scan(&entity.ID)
+	if err != nil {
+		log.Fatal("can't create expense ", err)
+		return err
+	}
+
+	return nil
 }
