@@ -13,13 +13,11 @@ import (
 type DB interface {
 	QueryRow(query string, args ...any) *sql.Row
 	Exec(query string, args ...interface{}) (sql.Result, error)
-	// CreateExpense(entity *model.Expense) error
 }
 
 type Db struct {
-	// *sql.DB
 	DB
-	isTestMode bool
+	IsTestMode bool
 }
 
 func InitDb() {
@@ -62,7 +60,7 @@ func (db *Db) CreateExpense(entity *model.Expense) error {
 		entity.Title, entity.Amount, entity.Note, pq.Array(&entity.Tags))
 
 	var err error
-	if !db.isTestMode {
+	if !db.IsTestMode {
 		err = row.Scan(&entity.ID)
 	}
 	if err != nil {
