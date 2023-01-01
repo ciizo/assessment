@@ -40,4 +40,5 @@ func RegisterHandlerForTest(httpHandler *echo.Echo) {
 func registerRoutes(httpHandler *echo.Echo, handler *Handler) {
 
 	httpHandler.POST("/expenses", handler.createHandler)
+	httpHandler.GET("/expenses/:id", handler.getHandler)
 }

@@ -83,7 +83,7 @@ func (db *Db) GetExpense(id int) (*model.Expense, error) {
 
 	row := stmt.QueryRow(id)
 	expense := &model.Expense{}
-	err = row.Scan(expense)
+	err = row.Scan(&expense.ID, &expense.Title, &expense.Amount, &expense.Note, pq.Array(&expense.Tags))
 	if err != nil {
 		fmt.Println("can't Scan row into variables", err)
 		return nil, err

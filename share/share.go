@@ -35,6 +35,12 @@ func (m *MockDB) QueryRow(query string, args ...interface{}) *sql.Row {
 	return &sql.Row{}
 }
 
+func (m *MockDB) Prepare(query string) (*sql.Stmt, error) {
+	m.query = query
+
+	return &sql.Stmt{}, nil
+}
+
 // type mockSqlROW struct {
 // 	err  error
 // 	rows *sql.Rows
