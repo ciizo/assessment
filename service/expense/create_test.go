@@ -1,6 +1,7 @@
 package expense
 
 import (
+	"database/sql"
 	"testing"
 
 	"github.com/ciizo/assessment/database"
@@ -15,6 +16,12 @@ func setUp() {
 	share.Validate = validator.New()
 	mock := &share.MockDB{}
 	db := &database.Db{DB: mock, IsTestMode: true}
+	service = NewService(db)
+}
+
+func setUpByDB(mockDb *sql.DB) {
+	share.Validate = validator.New()
+	db := &database.Db{DB: mockDb, IsTestMode: true}
 	service = NewService(db)
 }
 

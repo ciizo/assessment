@@ -13,6 +13,7 @@ import (
 type DB interface {
 	QueryRow(query string, args ...any) *sql.Row
 	Exec(query string, args ...interface{}) (sql.Result, error)
+	Prepare(query string) (*sql.Stmt, error)
 }
 
 type Db struct {
@@ -69,4 +70,25 @@ func (db *Db) CreateExpense(entity *model.Expense) error {
 	}
 
 	return nil
+}
+
+func (db *Db) GetExpense(id int) (*model.Expense, error) {
+
+	stmt, err := db.Prepare("SELECT id, title, amount, note, tags FROM expenses where id=$1")
+	if err != nil {
+		fmt.Println("can'tprepare query one row statment", err)
+		return nil, err
+
+	}
+
+	row := stmt.QueryRow(id)
+	expense := &model.Expense{}
+	err = row.Scan(&expense.ID, &expense.Title, &expense.Amount, &expense.Note, pq.Array(&expense.Tags))
+	if err != nil {
+		fmt.Println("can't Scan row into variables", err)
+		return nil, err
+
+	}
+
+	return expense, nil
 }

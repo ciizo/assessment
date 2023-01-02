@@ -2,6 +2,7 @@ package share
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -29,25 +30,11 @@ func (m *MockDB) Exec(query string, args ...interface{}) (sql.Result, error) {
 func (m *MockDB) QueryRow(query string, args ...interface{}) *sql.Row {
 	m.query = query
 
-	// return sql.Row(&mockSqlROW{})
-	// return (*sql.Row)(unsafe.Pointer(&mockSqlROW{}))
-	// return &mockSqlROW{}
 	return &sql.Row{}
 }
 
-// type mockSqlROW struct {
-// 	err  error
-// 	rows *sql.Rows
-// }
+func (m *MockDB) Prepare(query string) (*sql.Stmt, error) {
 
-// func (r *mockSqlROW) Scan(dest ...interface{}) error {
-// 	// if r.err != nil {
-// 	// 	return r.err
-// 	// }
-
-// 	return nil
-// }
-
-// func (r *mockSqlROW) Err() error {
-// 	return r.err
-// }
+	//TODO need to remove MockDB struct and use sql.DB with sqlmock
+	return nil, errors.New("not implement/support ")
+}
