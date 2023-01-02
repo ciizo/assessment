@@ -39,7 +39,7 @@ func TestGetExpenseSuccess(t *testing.T) {
 	mockDb, mockSql, err := sqlmock.New()
 	assert.NoError(t, err)
 
-	mockSql.ExpectPrepare("SELECT id, title, amount, note, tags FROM expenses").ExpectQuery().WithArgs(entity.ID).WillReturnRows(newsMockRows)
+	mockSql.ExpectPrepare(regexp.QuoteMeta("SELECT id, title, amount, note, tags FROM expenses where id=$1")).ExpectQuery().WithArgs(entity.ID).WillReturnRows(newsMockRows)
 	db := &Db{DB: mockDb, IsTestMode: true}
 
 	result := &model.Expense{}
@@ -59,8 +59,6 @@ func TestUpdateExpenseSuccess(t *testing.T) {
 		Amount: 100,
 		Note:   "test-note",
 		Tags:   []string{"test-tag1", "test-tag2"}}
-	// updatedMockRows := sqlmock.NewRows([]string{"id", "title", "amount", "note", "tags"}).
-	// 	AddRow(entity.ID, entity.Title, entity.Amount, entity.Note, pq.Array(entity.Tags))
 	mockDb, mockSql, err := sqlmock.New()
 	assert.NoError(t, err)
 

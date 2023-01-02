@@ -74,7 +74,7 @@ func (db *Db) CreateExpense(entity *model.Expense) error {
 
 func (db *Db) GetExpense(id int) (*model.Expense, error) {
 
-	stmt, err := db.Prepare("SELECT id, title, amount, note, tags FROM expenses where id=$1")
+	stmt, err := db.Prepare("SELECT id, title, amount, note, tags FROM expenses WHERE id=$1")
 	if err != nil {
 		fmt.Println("can'tprepare query one row statment", err)
 		return nil, err
