@@ -93,6 +93,35 @@ func (db *Db) GetExpense(id int) (*model.Expense, error) {
 	return expense, nil
 }
 
+func (db *Db) GetExpenses() (*[]model.Expense, error) {
+
+	stmt, err := db.Prepare("SELECT id, title, amount, note, tags FROM expenses")
+	if err != nil {
+		fmt.Println("can't prepare query rows statment", err)
+		return nil, err
+
+	}
+
+	rows, err := stmt.Query()
+	if err != nil {
+		fmt.Println("can't query rows statment", err)
+		return nil, err
+
+	}
+	expenses := []model.Expense{}
+	for rows.Next() {
+		expense := model.Expense{}
+		err := rows.Scan(&expense.ID, &expense.Title, &expense.Amount, &expense.Note, pq.Array(&expense.Tags))
+		if err != nil {
+			fmt.Println("can't Scan rows into variables", err)
+			return nil, err
+		}
+		expenses = append(expenses, expense)
+	}
+
+	return &expenses, nil
+}
+
 func (db *Db) UpdateExpense(entity *model.Expense) error {
 	stmt, err := db.Prepare(`
 	UPDATE expenses
