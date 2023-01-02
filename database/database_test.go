@@ -1,6 +1,7 @@
 package database
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -48,5 +49,26 @@ func TestGetExpenseSuccess(t *testing.T) {
 		assert.NotNil(t, result)
 		assert.Equal(t, entity, result)
 	}
+
+}
+
+func TestUpdateExpenseSuccess(t *testing.T) {
+	entity := &model.Expense{
+		ID:     1,
+		Title:  "test-title",
+		Amount: 100,
+		Note:   "test-note",
+		Tags:   []string{"test-tag1", "test-tag2"}}
+	// updatedMockRows := sqlmock.NewRows([]string{"id", "title", "amount", "note", "tags"}).
+	// 	AddRow(entity.ID, entity.Title, entity.Amount, entity.Note, pq.Array(entity.Tags))
+	mockDb, mockSql, err := sqlmock.New()
+	assert.NoError(t, err)
+
+	mockSql.ExpectPrepare(regexp.QuoteMeta("UPDATE expenses SET title=$2, amount=$3, note=$4, tags=$5 WHERE id=$1")).ExpectExec().WithArgs(entity.ID, entity.Title, entity.Amount, entity.Note, pq.Array(entity.Tags)).WillReturnResult(sqlmock.NewResult(int64(entity.ID), 1))
+	db := &Db{DB: mockDb, IsTestMode: true}
+
+	err = db.UpdateExpense(entity)
+
+	assert.NoError(t, err)
 
 }
