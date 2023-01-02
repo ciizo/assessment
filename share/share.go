@@ -35,5 +35,6 @@ func (m *MockDB) QueryRow(query string, args ...interface{}) *sql.Row {
 
 func (m *MockDB) Prepare(query string) (*sql.Stmt, error) {
 
+	//TODO need to remove MockDB struct and use sql.DB with sqlmock
 	return nil, errors.New("not implement/support ")
 }
