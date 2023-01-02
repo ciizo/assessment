@@ -6,35 +6,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"testing"
 
 	"github.com/ciizo/assessment/model"
-	"github.com/ciizo/assessment/share"
-	"github.com/go-playground/validator/v10"
-	"github.com/labstack/echo/v4"
 )
 
-func setup(t *testing.T) (*httptest.Server, func()) {
-	t.Helper()
-
-	share.Validate = validator.New()
-
-	httpHandler := echo.New()
-	RegisterHandlerForTest(httpHandler)
-
-	server := httptest.NewServer(httpHandler)
-
-	teardown := func() {
-		server.Close()
-	}
-
-	return server, teardown
-}
-
 func TestHttpCreate(t *testing.T) {
-	server, teardown := setup(t)
+	server, teardown := setupForTest(t)
 	defer teardown()
 
 	t.Run("Create expense success", func(t *testing.T) {
