@@ -39,7 +39,7 @@ func TestGetExpenseSuccess(t *testing.T) {
 	mockDb, mockSql, err := sqlmock.New()
 	assert.NoError(t, err)
 
-	mockSql.ExpectPrepare(regexp.QuoteMeta("SELECT id, title, amount, note, tags FROM expenses where id=$1")).ExpectQuery().WithArgs(entity.ID).WillReturnRows(newsMockRows)
+	mockSql.ExpectPrepare(regexp.QuoteMeta("SELECT id, title, amount, note, tags FROM expenses WHERE id=$1")).ExpectQuery().WithArgs(entity.ID).WillReturnRows(newsMockRows)
 	db := &Db{DB: mockDb, IsTestMode: true}
 
 	result := &model.Expense{}
