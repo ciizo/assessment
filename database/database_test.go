@@ -3,8 +3,11 @@ package database
 import (
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/ciizo/assessment/model"
 	"github.com/ciizo/assessment/share"
+	"github.com/lib/pq"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateExpenseSuccess(t *testing.T) {
@@ -19,6 +22,31 @@ func TestCreateExpenseSuccess(t *testing.T) {
 
 	if err != nil {
 		t.Error(err)
+	}
+
+}
+
+func TestGetExpenseSuccess(t *testing.T) {
+	entity := &model.Expense{
+		ID:     1,
+		Title:  "test-title",
+		Amount: 100,
+		Note:   "test-note",
+		Tags:   []string{"test-tag1", "test-tag2"}}
+	newsMockRows := sqlmock.NewRows([]string{"id", "title", "amount", "note", "tags"}).
+		AddRow(entity.ID, entity.Title, entity.Amount, entity.Note, pq.Array(entity.Tags))
+	mockDb, mockSql, err := sqlmock.New()
+	assert.NoError(t, err)
+
+	mockSql.ExpectPrepare("SELECT id, title, amount, note, tags FROM expenses").ExpectQuery().WithArgs(entity.ID).WillReturnRows(newsMockRows)
+	db := &Db{DB: mockDb, IsTestMode: true}
+
+	result := &model.Expense{}
+	result, err = db.GetExpense(entity.ID)
+
+	if assert.NoError(t, err) {
+		assert.NotNil(t, result)
+		assert.Equal(t, entity, result)
 	}
 
 }
