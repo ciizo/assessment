@@ -8,8 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *Handler) getHandler(c echo.Context) error {
-
+func (h *Handler) updateHandler(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, model.Err{Message: "id should be int " + err.Error()})
@@ -18,11 +17,16 @@ func (h *Handler) getHandler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, model.Err{Message: "id must be greater than 0"})
 	}
 
-	result := &model.Expense{}
-	result, err = h.expenseService.Get(id)
+	expense := model.Expense{}
+	err = c.Bind(&expense)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, model.Err{Message: err.Error()})
+	}
+
+	err = h.expenseService.Update(id, &expense)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Err{Message: err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, expense)
 }

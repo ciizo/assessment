@@ -92,3 +92,23 @@ func (db *Db) GetExpense(id int) (*model.Expense, error) {
 
 	return expense, nil
 }
+
+func (db *Db) UpdateExpense(entity *model.Expense) error {
+	stmt, err := db.Prepare(`
+	UPDATE expenses
+	SET title=$2, amount=$3, note=$4, tags=$5
+	WHERE id=$1
+	`)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	_, err = stmt.Exec(entity.ID, entity.Title, entity.Amount, entity.Note, pq.Array(entity.Tags))
+	if err != nil {
+		fmt.Println("can't update entity ", err)
+		return err
+	}
+
+	return nil
+}
