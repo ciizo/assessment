@@ -2,6 +2,7 @@ package share
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -33,7 +34,6 @@ func (m *MockDB) QueryRow(query string, args ...interface{}) *sql.Row {
 }
 
 func (m *MockDB) Prepare(query string) (*sql.Stmt, error) {
-	m.query = query
 
-	return &sql.Stmt{}, nil
+	return nil, errors.New("not implement/support ")
 }
