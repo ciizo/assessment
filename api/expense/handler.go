@@ -92,5 +92,6 @@ func registerRoutes(httpHandler *echo.Echo, handler *Handler) {
 	httpHandler.POST("/expenses", handler.createHandler)
 	httpHandler.GET("/expenses/:id", handler.getHandler)
 	httpHandler.PUT("/expenses/:id", handler.updateHandler)
+	httpHandler.GET("/expenses", handler.getListHandler)
 
 }
