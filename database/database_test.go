@@ -70,3 +70,27 @@ func TestUpdateExpenseSuccess(t *testing.T) {
 	assert.NoError(t, err)
 
 }
+
+func TestGetExpensesSuccess(t *testing.T) {
+	entity := &model.Expense{
+		Title:  "test-title",
+		Amount: 100,
+		Note:   "test-note",
+		Tags:   []string{"test-tag1", "test-tag2"}}
+	newsMockRows := sqlmock.NewRows([]string{"id", "title", "amount", "note", "tags"}).
+		AddRow(1, entity.Title, entity.Amount, entity.Note, pq.Array(entity.Tags)).
+		AddRow(2, entity.Title, entity.Amount, entity.Note, pq.Array(entity.Tags))
+	mockDb, mockSql, err := sqlmock.New()
+	assert.NoError(t, err)
+
+	mockSql.ExpectPrepare(regexp.QuoteMeta("SELECT id, title, amount, note, tags FROM expenses")).ExpectQuery().WillReturnRows(newsMockRows)
+	db := &Db{DB: mockDb, IsTestMode: true}
+
+	results := &[]model.Expense{}
+	results, err = db.GetExpenses()
+
+	if assert.NoError(t, err) {
+		assert.NotNil(t, results)
+	}
+
+}
