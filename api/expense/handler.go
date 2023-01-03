@@ -2,6 +2,7 @@ package expense
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http/httptest"
 	"testing"
 
@@ -60,6 +61,11 @@ func RegisterHandler(httpHandler *echo.Echo) {
 
 	httpHandler.Use(middleware.Logger())
 	httpHandler.Use(middleware.Recover())
+	httpHandler.Use(middleware.KeyAuthWithConfig(middleware.KeyAuthConfig{
+		Validator:  authMiddleware,
+		KeyLookup:  "header:" + echo.HeaderAuthorization,
+		AuthScheme: "November",
+	}))
 
 	registerRoutes(httpHandler, handler)
 }
@@ -93,5 +99,16 @@ func registerRoutes(httpHandler *echo.Echo, handler *Handler) {
 	httpHandler.GET("/expenses/:id", handler.getHandler)
 	httpHandler.PUT("/expenses/:id", handler.updateHandler)
 	httpHandler.GET("/expenses", handler.getListHandler)
+
+}
+
+func authMiddleware(auth string, c echo.Context) (bool, error) {
+	fmt.Println(auth)
+
+	if "10, 2009" == auth {
+		return true, nil
+	}
+
+	return false, nil
 
 }
