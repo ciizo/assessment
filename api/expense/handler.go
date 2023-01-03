@@ -2,7 +2,6 @@ package expense
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http/httptest"
 	"testing"
 
@@ -103,8 +102,6 @@ func registerRoutes(httpHandler *echo.Echo, handler *Handler) {
 }
 
 func authMiddleware(auth string, c echo.Context) (bool, error) {
-	fmt.Println(auth)
-
 	if "10, 2009" == auth {
 		return true, nil
 	}
