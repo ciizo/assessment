@@ -12,6 +12,7 @@ import (
 	"github.com/ciizo/assessment/service/expense"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 )
 
 type Handler struct {
@@ -24,6 +25,8 @@ func setupForTest(t *testing.T) (*httptest.Server, func()) {
 	share.Validate = validator.New()
 
 	httpHandler := echo.New()
+	httpHandler.Logger.SetLevel(log.INFO)
+
 	registerHandlerForTest(httpHandler)
 
 	server := httptest.NewServer(httpHandler)
@@ -41,6 +44,8 @@ func setupByDBForTest(t *testing.T, mockDb *sql.DB) (*httptest.Server, func()) {
 	share.Validate = validator.New()
 
 	httpHandler := echo.New()
+	httpHandler.Logger.SetLevel(log.INFO)
+
 	registerHandlerByDBForTest(httpHandler, mockDb)
 
 	server := httptest.NewServer(httpHandler)
