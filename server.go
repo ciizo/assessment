@@ -20,13 +20,14 @@ func main() {
 	fmt.Println("Please use server.go for main file")
 	fmt.Println("start at port:", os.Getenv("PORT"))
 
-	database.InitDb()
+	dbConnectionstring := os.Getenv("DATABASE_URL")
+	database.InitDb(dbConnectionstring)
 	share.Validate = validator.New()
 
 	httpHandler := echo.New()
 	httpHandler.Logger.SetLevel(log.INFO)
 
-	expense.RegisterHandler(httpHandler)
+	expense.RegisterHandler(httpHandler, dbConnectionstring)
 
 	go func() {
 		// Start server
