@@ -26,7 +26,7 @@ func TestGetListSuccess(t *testing.T) {
 		AddRow(1, entity.Title, entity.Amount, entity.Note, pq.Array(entity.Tags)).
 		AddRow(2, entity.Title, entity.Amount, entity.Note, pq.Array(entity.Tags))
 	mockSql.ExpectPrepare(regexp.QuoteMeta("SELECT id, title, amount, note, tags FROM expenses")).ExpectQuery().WillReturnRows(newsMockRows)
-	setUpByDB(mockDb)
+	setUpTestServiceByDB(mockDb)
 
 	_, err = service.GetList()
 

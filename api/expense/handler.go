@@ -66,14 +66,14 @@ func setupByDBForTest(t *testing.T, mockDb *sql.DB) (*httptest.Server, func()) {
 func setupForITTest(t *testing.T) *echo.Echo {
 	t.Helper()
 
-	database.InitDb(share.ITTestDbConnectioString)
+	database.InitDb(share.IT_Test_DB_ConnectionString)
 	share.Validate = validator.New()
 
 	httpHandler := echo.New()
 	httpHandler.Logger.SetLevel(gommon_log.INFO)
 
 	go func(e *echo.Echo) {
-		RegisterHandler(e, share.ITTestDbConnectioString)
+		RegisterHandler(e, share.IT_Test_DB_ConnectionString)
 
 		// Start server
 		if err := e.Start(":" + os.Getenv("PORT")); err != nil && err != http.ErrServerClosed {

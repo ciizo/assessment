@@ -16,6 +16,9 @@ func (h *Handler) createHandler(c echo.Context) error {
 
 	err = h.expenseService.Create(&expense)
 	if err != nil {
+		if model.IsServiceErr(err) {
+			return c.JSON(err.(model.ServiceErr).ToHTTPStatus(), model.Err{Message: err.Error()})
+		}
 		return c.JSON(http.StatusInternalServerError, model.Err{Message: err.Error()})
 	}
 
