@@ -7,7 +7,6 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 	"time"
 
@@ -76,13 +75,13 @@ func setupForITTest(t *testing.T) *echo.Echo {
 		RegisterHandler(e, share.IT_Test_DB_ConnectionString)
 
 		// Start server
-		if err := e.Start(":" + os.Getenv("PORT")); err != nil && err != http.ErrServerClosed {
+		if err := e.Start(fmt.Sprintf(":%d", share.IT_Test_ServerPort)); err != nil && err != http.ErrServerClosed {
 			e.Logger.Fatal(err, " shutting down the server")
 		}
 	}(httpHandler)
 
 	for {
-		conn, err := net.DialTimeout("tcp", fmt.Sprintf("localhost:%v", os.Getenv("PORT")), 30*time.Second)
+		conn, err := net.DialTimeout("tcp", fmt.Sprintf("localhost:%v", share.IT_Test_ServerPort), 30*time.Second)
 		if err != nil {
 			log.Println(err)
 		}
