@@ -24,15 +24,15 @@ func main() {
 	database.InitDb(dbConnectionstring)
 	share.Validate = validator.New()
 
-	httpHandler := echo.New()
-	httpHandler.Logger.SetLevel(log.INFO)
+	eh := echo.New()
+	eh.Logger.SetLevel(log.INFO)
 
-	expense.RegisterHandler(httpHandler, dbConnectionstring)
+	expense.RegisterHandler(eh, dbConnectionstring)
 
 	go func() {
 		// Start server
-		if err := httpHandler.Start(":" + os.Getenv("PORT")); err != nil && err != http.ErrServerClosed {
-			httpHandler.Logger.Fatal(err, " shutting down the server")
+		if err := eh.Start(":" + os.Getenv("PORT")); err != nil && err != http.ErrServerClosed {
+			eh.Logger.Fatal(err, " shutting down the server")
 		}
 	}()
 
@@ -41,8 +41,8 @@ func main() {
 	<-shutdown
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	if err := httpHandler.Shutdown(ctx); err != nil {
-		httpHandler.Logger.Fatal(err)
+	if err := eh.Shutdown(ctx); err != nil {
+		eh.Logger.Fatal(err)
 	}
 
 }
