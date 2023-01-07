@@ -2,8 +2,14 @@ package expense
 
 import (
 	"database/sql"
+	"fmt"
+	"log"
+	"net"
+	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
+	"time"
 
 	"github.com/ciizo/assessment/database"
 	"github.com/ciizo/assessment/share"
@@ -12,7 +18,7 @@ import (
 	"github.com/ciizo/assessment/service/expense"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
+	gommon_log "github.com/labstack/gommon/log"
 )
 
 type Handler struct {
@@ -25,7 +31,7 @@ func setupForTest(t *testing.T) (*httptest.Server, func()) {
 	share.Validate = validator.New()
 
 	httpHandler := echo.New()
-	httpHandler.Logger.SetLevel(log.INFO)
+	httpHandler.Logger.SetLevel(gommon_log.INFO)
 
 	registerHandlerForTest(httpHandler)
 
@@ -44,7 +50,7 @@ func setupByDBForTest(t *testing.T, mockDb *sql.DB) (*httptest.Server, func()) {
 	share.Validate = validator.New()
 
 	httpHandler := echo.New()
-	httpHandler.Logger.SetLevel(log.INFO)
+	httpHandler.Logger.SetLevel(gommon_log.INFO)
 
 	registerHandlerByDBForTest(httpHandler, mockDb)
 
@@ -57,9 +63,41 @@ func setupByDBForTest(t *testing.T, mockDb *sql.DB) (*httptest.Server, func()) {
 	return server, teardown
 }
 
-func RegisterHandler(httpHandler *echo.Echo) {
+func setupForITTest(t *testing.T) *echo.Echo {
+	t.Helper()
 
-	db := database.NewDb()
+	database.InitDb(share.ITTestDbConnectioString)
+	share.Validate = validator.New()
+
+	httpHandler := echo.New()
+	httpHandler.Logger.SetLevel(gommon_log.INFO)
+
+	go func(e *echo.Echo) {
+		RegisterHandler(e, share.ITTestDbConnectioString)
+
+		// Start server
+		if err := e.Start(":" + os.Getenv("PORT")); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal(err, " shutting down the server")
+		}
+	}(httpHandler)
+
+	for {
+		conn, err := net.DialTimeout("tcp", fmt.Sprintf("localhost:%v", os.Getenv("PORT")), 30*time.Second)
+		if err != nil {
+			log.Println(err)
+		}
+		if conn != nil {
+			conn.Close()
+			break
+		}
+	}
+
+	return httpHandler
+}
+
+func RegisterHandler(httpHandler *echo.Echo, dbConnectionString string) {
+
+	db := database.GetDatabase(dbConnectionString)
 	service := expense.NewService(db)
 	handler := &Handler{expenseService: service}
 

@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 
 	_ "embed"
 
@@ -26,17 +25,14 @@ type Db struct {
 	IsTestMode bool
 }
 
-func InitDb() {
-	db := getDatabase()
+func InitDb(connectionString string) {
+	db := GetDatabase(connectionString)
 	db.initExpenseTable()
 }
 
-func NewDb() *Db {
-	return getDatabase()
-}
+func GetDatabase(connectionString string) *Db {
+	conn, err := sql.Open("postgres", connectionString)
 
-func getDatabase() *Db {
-	conn, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal("can't connect to database", err)
 	}
