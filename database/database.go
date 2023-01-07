@@ -6,9 +6,14 @@ import (
 	"log"
 	"os"
 
+	_ "embed"
+
 	"github.com/ciizo/assessment/model"
 	"github.com/lib/pq"
 )
+
+//go:embed script/01-init.sql
+var sql_01_init string
 
 type DB interface {
 	QueryRow(query string, args ...any) *sql.Row
@@ -40,17 +45,7 @@ func getDatabase() *Db {
 }
 
 func (db *Db) initExpenseTable() {
-	createTableSql := `
-	CREATE TABLE IF NOT EXISTS expenses (
-		id SERIAL PRIMARY KEY,
-		title TEXT,
-		amount FLOAT,
-		note TEXT,
-		tags TEXT[]
-	);
-	`
-
-	if _, err := db.Exec(createTableSql); err != nil {
+	if _, err := db.Exec(sql_01_init); err != nil {
 		log.Fatal("can't create table ", err)
 	}
 }
