@@ -1,3 +1,6 @@
+//go:build unit || api
+// +build unit api
+
 package expense
 
 import (

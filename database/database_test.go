@@ -1,3 +1,6 @@
+//go:build unit || database
+// +build unit database
+
 package database
 
 import (
