@@ -6,4 +6,4 @@ import (
 
 var Validate *validator.Validate
 
-const ITTestDbConnectioString = "postgresql://root:root@db/go-it-db?sslmode=disable"
+const IT_Test_DB_ConnectionString = "postgresql://root:root@db/go-it-db?sslmode=disable"
