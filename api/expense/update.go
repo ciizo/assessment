@@ -22,6 +22,9 @@ func (h *Handler) updateHandler(c echo.Context) error {
 
 	err = h.expenseService.Update(id, &expense)
 	if err != nil {
+		if model.IsServiceErr(err) {
+			return c.JSON(err.(model.ServiceErr).ToHTTPStatus(), model.Err{Message: err.Error()})
+		}
 		return c.JSON(http.StatusInternalServerError, model.Err{Message: err.Error()})
 	}
 
