@@ -10,7 +10,7 @@ services:
       dockerfile: ./Dockerfile.test
     volumes:
       # - $PWD:/go/src/target
-      - .:/go/sec/target
+      - .:/go/src/target
     depends_on:
       - db
     networks:
