@@ -10,19 +10,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/ciizo/assessment/model"
+	"github.com/ciizo/assessment/share"
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 )
-
-var serverPort = os.Getenv("PORT")
 
 const authKeyScheme = "November"
 
@@ -34,7 +32,7 @@ func TestITGetGreeting(t *testing.T) {
 	eh := setupForITTest(t)
 
 	// Arrange
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:%s/", serverPort), strings.NewReader(""))
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:%d/", share.IT_Test_ServerPort), strings.NewReader(""))
 	assert.NoError(t, err)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	req.Header.Set(echo.HeaderAuthorization, authKey)
@@ -71,7 +69,7 @@ func TestITCreateUpdateListRead(t *testing.T) {
 		// Arrange
 		entityBytes, err := json.Marshal(entity)
 		assert.NoError(t, err)
-		req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("http://localhost:%s/expenses", serverPort), bytes.NewReader(entityBytes))
+		req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("http://localhost:%d/expenses", share.IT_Test_ServerPort), bytes.NewReader(entityBytes))
 		assert.NoError(t, err)
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 		req.Header.Set(echo.HeaderAuthorization, authKey)
@@ -105,7 +103,7 @@ func TestITCreateUpdateListRead(t *testing.T) {
 		entity.Title = entity.Title + "updated"
 		entityBytes, err := json.Marshal(entity)
 		assert.NoError(t, err)
-		req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("http://localhost:%s/expenses/%v", serverPort, entity.ID), bytes.NewReader(entityBytes))
+		req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("http://localhost:%d/expenses/%v", share.IT_Test_ServerPort, entity.ID), bytes.NewReader(entityBytes))
 		assert.NoError(t, err)
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 		req.Header.Set(echo.HeaderAuthorization, authKey)
@@ -134,7 +132,7 @@ func TestITCreateUpdateListRead(t *testing.T) {
 	t.Run("Get list of expense", func(t *testing.T) {
 
 		// Arrange
-		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:%s/expenses", serverPort), strings.NewReader(""))
+		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:%d/expenses", share.IT_Test_ServerPort), strings.NewReader(""))
 		assert.NoError(t, err)
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 		req.Header.Set(echo.HeaderAuthorization, authKey)
@@ -162,7 +160,7 @@ func TestITCreateUpdateListRead(t *testing.T) {
 	t.Run("Get expense", func(t *testing.T) {
 
 		// Arrange
-		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:%s/expenses/%v", serverPort, entity.ID), strings.NewReader(""))
+		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:%d/expenses/%v", share.IT_Test_ServerPort, entity.ID), strings.NewReader(""))
 		assert.NoError(t, err)
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 		req.Header.Set(echo.HeaderAuthorization, authKey)
