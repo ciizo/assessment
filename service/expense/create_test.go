@@ -10,7 +10,7 @@ import (
 )
 
 func TestCreateSuccess(t *testing.T) {
-	setUp()
+	setUpTestService()
 	entity := &model.Expense{
 		Title:  "Test T",
 		Amount: 79,
@@ -25,7 +25,7 @@ func TestCreateSuccess(t *testing.T) {
 }
 
 func TestCreateInvalidModel(t *testing.T) {
-	setUp()
+	setUpTestService()
 	entity := &model.Expense{
 		Title:  "Test T",
 		Amount: 1,

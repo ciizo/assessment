@@ -25,7 +25,7 @@ func TestGetSuccess(t *testing.T) {
 	newsMockRows := sqlmock.NewRows([]string{"id", "title", "amount", "note", "tags"}).
 		AddRow(entity.ID, entity.Title, entity.Amount, entity.Note, pq.Array(entity.Tags))
 	mockSql.ExpectPrepare("SELECT id, title, amount, note, tags FROM expenses").ExpectQuery().WithArgs(entity.ID).WillReturnRows(newsMockRows)
-	setUpByDB(mockDb)
+	setUpTestServiceByDB(mockDb)
 
 	_, err = service.Get(entity.ID)
 
